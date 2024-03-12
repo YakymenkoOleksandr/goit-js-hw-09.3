@@ -1,5 +1,5 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const images = [
   {
@@ -67,25 +67,33 @@ const images = [
   },
 ];
 
-const container = document.querySelector(".gallery");
-container.insertAdjacentHTML("beforeend", createMarkup(images));
+const gallery = document.querySelector('.gallery');
+const allPictures = document.createDocumentFragment();
+
+const blockOfgalery = image => {
+  const tagLi = document.createElement('li');
+  tagLi.classList.add('gallery-item');
+  const tagA = document.createElement('a');
+  tagA.classList.add('gallery-link');
+  tagA.setAttribute('href', image.preview);
+  const tagImg = document.createElement('img');
+  tagImg.classList.add('gallery-image');
+  tagImg.setAttribute('src', image.original);
+  tagImg.setAttribute('data-source', image.preview);
+  tagImg.setAttribute('alt', image.description);
+  tagA.append(tagImg);
+  tagLi.appendChild(tagA);
+  return tagLi;
+};
+
+for (const image of images) {
+  const galleryItem = blockOfgalery(image);
+  allPictures.appendChild(galleryItem);
+}
+
+gallery.appendChild(allPictures);
 
 const lightbox = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
     captionsData: 'alt',
 })
-function createMarkup(arr) {
-  return arr
-    .map(
-      ({preview, original, description}) => `<li class="gallery-item">
-	<a class="gallery-link" href="${original}">
-		<img
-			class="gallery-image"
-			src="${preview}"
-			alt="${description}"
-			/>
-	</a>
-</li>  `
-    )
-    .join("");
-}
